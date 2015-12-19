@@ -1,10 +1,10 @@
 # depslib dependency file v1.0
-1450543027 source:c:\users\vitor ramos\desktop\c++\projetos\maquinadeestados\main.cpp
+1450544060 source:c:\users\vitor ramos\desktop\c++\projetos\maquinadeestados\main.cpp
 	<iostream>
-	<map>
-	<math.h>
 	<algorithm>
 	<vector>
+	<math.h>
+	<map>
 
 1341006774 c:\program files (x86)\codeblocks\mingw\include\math.h
 	<_mingw.h>

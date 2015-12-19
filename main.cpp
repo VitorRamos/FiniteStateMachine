@@ -41,6 +41,15 @@ struct MaquinaEstados
 {
     vector<string> variaveis;
     vector<Estado> estados;
+    void AdicionaEstado(string nome, int id)
+    {
+        Estado x{nome, id};
+        estados.push_back(x);
+    }
+    void AdicionaVariavel(string nome)
+    {
+        variaveis.push_back(nome);
+    }
     bool ProcessaOp(string op)
     {
         // Processa not
@@ -111,23 +120,20 @@ struct MaquinaEstados
                 ProximoEstado(estados[i], todosValores);
             }
         }
-
     }
 };
 
 int main()
 {
     MaquinaEstados RTL;
-    Estado inicial{"Inicial", 0}, espera{"Espera", 1}, bt1{"bt1", 2};
-    RTL.estados.push_back(inicial);
-    RTL.estados.push_back(espera);
-    RTL.estados.push_back(bt1);
-    RTL.variaveis.push_back("a");
-    RTL.variaveis.push_back("b");
-    RTL.variaveis.push_back("c");
-    RTL.Liga("Inicial", "Espera", "");
-    RTL.Liga("Espera", "Espera", "!a");
-    RTL.Liga("Espera", "bt1", "a");
+    RTL.AdicionaVariavel("a");
+    RTL.AdicionaVariavel("b");
+    RTL.AdicionaEstado("inicial", 0b0);
+    RTL.AdicionaEstado("espera", 0b1);
+    RTL.AdicionaEstado("bt1", 0b10);
+    RTL.Liga("inicial", "espera", "");
+    RTL.Liga("espera", "espera", "!a");
+    RTL.Liga("espera", "bt1", "a");
     RTL.Liga("bt1", "bt1", "b");
     RTL.Liga("bt1", "Inicial", "!b");
     RTL.Possibilidades();
