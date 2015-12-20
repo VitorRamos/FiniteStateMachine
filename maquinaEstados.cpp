@@ -113,7 +113,7 @@ void MaquinaEstados::Possibilidades()
                 todosValores+=variaveis[k]+"="+valores[k];
                 if(k!=valores.size()-1) todosValores+=",";
             }
-            cout << intToBinary(estados[i].id,2) << " " << valores << " "
+            cout << intToBinary(estados[i].id,2) << valores << " "
                  << intToBinary(ProximoEstadoId(estados[i], todosValores),2) << endl;
             ProximoEstadoId(estados[i], todosValores);
         }
