@@ -76,6 +76,16 @@ bool MaquinaEstados::ProcessaOp(string op)
 }
 void MaquinaEstados::Liga(string e1, string e2, string cond)
 {
+    string test_cond= cond;
+    while(test_cond.find("+")!=string::npos)
+        test_cond.replace(test_cond.find("+"),1,"");
+    while(test_cond.find("!")!=string::npos)
+        test_cond.replace(test_cond.find("!"),1,"");
+    for(auto& var: variaveis)
+        while(test_cond.find(var)!=string::npos)
+            test_cond.replace(test_cond.find(var),var.size(),"");
+    if(!test_cond.empty())
+        return;
     int id= -1;
     for(auto& est: estados) if(paraMinusculo(est.nome) == paraMinusculo(e2)) id= est.id;
     if(id == -1) // estado não existe
