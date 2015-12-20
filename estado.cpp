@@ -7,6 +7,6 @@ Estado::Estado(string nome, int id)
 }
 void Estado::Liga(int estado_prox, string condicao)
 {
-    estado_proximo.push_back(estado_prox);
+    estado_proximo_id.push_back(estado_prox);
     condicoes.push_back(condicao);
 }

@@ -25,7 +25,7 @@ public:
     string SubstitueValores(string exp, string valores);
     bool ProcessaOp(string op);
     void Liga(string e1, string e2, string cond);
-    int ProximoEstado(Estado estado_atual, string todosValores);
+    int ProximoEstadoId(Estado estado_atual, string todosValores);
     void Possibilidades();
 };
 #endif // MAQUINAESTADOS_H

@@ -19,12 +19,26 @@ string intToBinary(int n, int nbits= 0)
     return ret;
 }
 
+string paraMinusculo(string str)
+{
+    string ret;
+    for(int i=0; i<str.size(); i++)
+        ret+=tolower(str[i]);
+    return ret;
+}
+
 void MaquinaEstados::AdicionaEstado(string nome, int id)
 {
+    for(auto& est: estados)
+        if( (paraMinusculo(nome) == paraMinusculo(est.nome)) || est.id == id ) // mesmo nome ou id
+            return;
     estados.push_back(Estado(nome, id));
 }
 void MaquinaEstados::AdicionaVariavel(string nome)
 {
+    for(auto& var: variaveis)
+        if(var == nome) // mesmo nome variavel
+            return ;
     variaveis.push_back(nome);
 }
 string MaquinaEstados::SubstitueValores(string exp, string valores)
@@ -63,18 +77,16 @@ bool MaquinaEstados::ProcessaOp(string op)
 void MaquinaEstados::Liga(string e1, string e2, string cond)
 {
     int id= -1;
-    for(auto& est: estados) if(est.nome == e2) id= est.id;
-    for(auto& est: estados) if(est.nome == e1) est.Liga(id, cond);
+    for(auto& est: estados) if(paraMinusculo(est.nome) == paraMinusculo(e2)) id= est.id;
+    if(id == -1) // estado não existe
+        return;
+    for(auto& est: estados) if(paraMinusculo(est.nome) == paraMinusculo(e1)) est.Liga(id, cond);
 }
-int MaquinaEstados::ProximoEstado(Estado estado_atual, string todosValores)
+int MaquinaEstados::ProximoEstadoId(Estado estado_atual, string todosValores)
 {
     for(unsigned int i=0; i<estado_atual.condicoes.size(); i++)
-    {
         if(ProcessaOp(SubstitueValores(estado_atual.condicoes[i], todosValores)))
-        {
-            return estado_atual.estado_proximo[i];
-        }
-    }
+            return estado_atual.estado_proximo_id[i];
     return estado_atual.id;
 }
 void MaquinaEstados::Possibilidades()
@@ -89,13 +101,11 @@ void MaquinaEstados::Possibilidades()
             for(unsigned int k=0; k<valores.size(); k++)
             {
                 todosValores+=variaveis[k]+"="+valores[k];
-                if(k!=valores.size()-1)
-                    todosValores+=",";
+                if(k!=valores.size()-1) todosValores+=",";
             }
             cout << intToBinary(estados[i].id,2) << " " << valores << " "
-            << intToBinary(ProximoEstado(estados[i], todosValores),2) << endl;
-            ProximoEstado(estados[i], todosValores);
+                 << intToBinary(ProximoEstadoId(estados[i], todosValores),2) << endl;
+            ProximoEstadoId(estados[i], todosValores);
         }
     }
 }
-
