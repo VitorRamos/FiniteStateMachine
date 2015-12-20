@@ -1,13 +1,40 @@
 # depslib dependency file v1.0
-1450544060 source:c:\users\vitor ramos\desktop\c++\projetos\maquinadeestados\main.cpp
+1450616148 source:c:\users\vitor ramos\desktop\c++\projetos\maquinadeestados\main.cpp
 	<iostream>
-	<algorithm>
-	<vector>
-	<math.h>
-	<map>
+	"maquinaEstados.h"
+	"estado.h"
 
 1341006774 c:\program files (x86)\codeblocks\mingw\include\math.h
 	<_mingw.h>
 
 1341006770 c:\program files (x86)\codeblocks\mingw\include\_mingw.h
+
+1450615737 c:\users\vitor ramos\desktop\c++\projetos\maquinadeestados\include\maquinaestados.h
+	"estado.h"
+	<math.h>
+	<vector>
+	<string>
+
+1450615678 c:\users\vitor ramos\desktop\c++\projetos\maquinadeestados\include\estado.h
+	"maquinaEstados.h"
+	<vector>
+	<string>
+
+1450616148 c:\users\vitor ramos\desktop\c++\projetos\maquinadeestados\maquinaestados.h
+	"estado.h"
+	<iostream>
+	<algorithm>
+	<math.h>
+	<vector>
+	<string>
+
+1450616031 c:\users\vitor ramos\desktop\c++\projetos\maquinadeestados\estado.h
+	<vector>
+	<string>
+
+1450615986 source:c:\users\vitor ramos\desktop\c++\projetos\maquinadeestados\estado.cpp
+	"estado.h"
+
+1450616098 source:c:\users\vitor ramos\desktop\c++\projetos\maquinadeestados\maquinaestados.cpp
+	"maquinaEstados.h"
 
