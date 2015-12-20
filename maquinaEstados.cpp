@@ -103,6 +103,16 @@ void MaquinaEstados::Possibilidades()
 {
     int total_poss= variaveis.size();
     int x= pow(2, total_poss);
+
+    int n_var_est= round(log2(estados.size()));
+
+    for(unsigned int i=0; i<n_var_est; i++)
+        cout << "Ea" << i << ",";
+    for(auto& var: variaveis)
+        cout << var << ",";
+    for(unsigned int i=0; i<n_var_est; i++)
+        cout << "," << "Ep" << i;
+    cout << endl;
     for(unsigned int i=0; i<estados.size(); i++)
     {
         for(int j=0; j<x; j++)
@@ -113,8 +123,21 @@ void MaquinaEstados::Possibilidades()
                 todosValores+=variaveis[k]+"="+valores[k];
                 if(k!=valores.size()-1) todosValores+=",";
             }
-            cout << intToBinary(estados[i].id,2) << valores << " "
-                 << intToBinary(ProximoEstadoId(estados[i], todosValores),2) << endl;
+            string txt_cod_ea= intToBinary(estados[i].id,2);
+            string txt_cod_ep= intToBinary(ProximoEstadoId(estados[i], todosValores),2);
+
+//            cout << txt_cod_ea << " " << valores << " " << txt_cod_ep << endl;
+            for(unsigned int k=0; k<txt_cod_ea.size(); k++)
+                cout << txt_cod_ea[k] << ",";
+            for(unsigned int k=0; k<valores.size(); k++)
+                cout << valores[k] << ",";
+            cout << ",";
+            for(unsigned int k=0; k<txt_cod_ep.size(); k++)
+            {
+                cout << txt_cod_ep[k];
+                if(k!=txt_cod_ep.size()-1) cout << ",";
+            }
+            cout << endl;
             ProximoEstadoId(estados[i], todosValores);
         }
     }
