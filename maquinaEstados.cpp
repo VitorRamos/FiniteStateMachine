@@ -22,7 +22,7 @@ string intToBinary(int n, int nbits= 0)
 string paraMinusculo(string str)
 {
     string ret;
-    for(int i=0; i<str.size(); i++)
+    for(unsigned int i=0; i<str.size(); i++)
         ret+=tolower(str[i]);
     return ret;
 }
@@ -84,7 +84,7 @@ void MaquinaEstados::Liga(string e1, string e2, string cond)
     for(auto& var: variaveis)
         while(test_cond.find(var)!=string::npos)
             test_cond.replace(test_cond.find(var),var.size(),"");
-    if(!test_cond.empty())
+    if(!test_cond.empty()) // condição invalida
         return;
     int id= -1;
     for(auto& est: estados) if(paraMinusculo(est.nome) == paraMinusculo(e2)) id= est.id;

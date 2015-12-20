@@ -44,9 +44,11 @@
 			<Add library="gdi32" />
 			<Add directory="C:/Program Files (x86)/CodeBlocks/MinGW/lib" />
 		</Linker>
-		<Unit filename="include/Estado.h" />
+		<Unit filename="estado.cpp" />
+		<Unit filename="estado.h" />
 		<Unit filename="main.cpp" />
-		<Unit filename="src/Estado.cpp" />
+		<Unit filename="maquinaEstados.cpp" />
+		<Unit filename="maquinaEstados.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
