@@ -43,7 +43,7 @@ bool MaquinaEstados::AdicionaVariavelOut(string nome)
     variaveis_out.push_back(nome);
     return true;
 }
-bool MaquinaEstados::AdicionaEstado(string nome, int id, string valor_out)
+bool MaquinaEstados::AdicionaEstado(string nome, int id, vector<string> valor_out)
 {
     //Verificar variaveis do valor_out
     for(auto& est: estados)
@@ -71,15 +71,14 @@ bool MaquinaEstados::Liga(string estado1, string estado2, string cond)
     for(auto& est: estados) if(paraMinusculo(est.nome) == paraMinusculo(estado1)) est.Liga(id, cond);
     return true;
 }
-string MaquinaEstados::SubstitueValores(string exp, string valores)
+string MaquinaEstados::SubstitueValores(string exp, vector<string> valores)
 {
-    while(valores.find("=")!=string::npos)
+    for(unsigned int i=0; i<valores.size(); i++)
     {
-        string valor= valores.substr(valores.find("=")+1, 1);
-        string letra= valores.substr(valores.find("=")-1, 1);
-        if(exp.find(letra)!=string::npos)
-            exp.replace(exp.find(letra), 1, valor);
-        valores.replace(valores.find("="), 1, "");
+        string letra= valores[i].substr(0, valores[i].find("="));
+        string valor= valores[i].substr(valores[i].find("=")+1, 1);
+         if(exp.find(letra)!=string::npos)
+            exp.replace(exp.find(letra), letra.size(), valor);
     }
     return exp;
 }
@@ -105,59 +104,59 @@ bool MaquinaEstados::ProcessaOp(string op)
     return false;
 }
 
-int MaquinaEstados::ProximoEstadoId(Estado estado_atual, string todosValores)
+int MaquinaEstados::ProximoEstadoId(Estado estado_atual, vector<string> todosValores)
 {
     for(unsigned int i=0; i<estado_atual.condicoes.size(); i++)
+    {
+//        cout << SubstitueValores(estado_atual.condicoes[i], todosValores) << endl;
         if(ProcessaOp(SubstitueValores(estado_atual.condicoes[i], todosValores)))
             return estado_atual.estado_proximo_id[i];
+    }
     return estado_atual.id;
 }
-void MaquinaEstados::Possibilidades()
+void MaquinaEstados::Possibilidades(ostream& out)
 {
-    int total_poss= variaveis_in.size();
-    int x= pow(2, total_poss);
+    int n_var_in= variaveis_in.size();
+    int x= pow(2, n_var_in);
     int n_var_est= round(log2(estados.size()));
 
     string varOut;
     for(auto& var: variaveis_out)
         varOut+=var;
     for(int i=0; i<n_var_est; i++)
-        cout << "Ea" << i << ",";
+        out << "Ea" << i << ",";
     for(auto& var: variaveis_in)
-        cout << var << ",";
+        out << var << ",";
     for(int i=0; i<n_var_est; i++)
-        cout << "," << "Ep" << i;
+        out << "," << "Ep" << i;
     for(auto& var: variaveis_out)
-        cout << "," << var;
-    cout << endl;
+        out << "," << var;
+    out << endl;
     for(unsigned int i=0; i<estados.size(); i++)
     {
         for(int j=0; j<x; j++)
         {
-            string valores= intToBinary(j, total_poss), todosValores;
+            string valores= intToBinary(j, n_var_in); // ,todosValores;
+            vector<string> todosValores;
             for(unsigned int k=0; k<valores.size(); k++)
             {
-                todosValores+=variaveis_in[k]+"="+valores[k];
-                if(k!=valores.size()-1) todosValores+=",";
+                string aux= variaveis_in[k]+"="+valores[k];
+                todosValores.push_back(aux);
             }
-            string txt_cod_ea= intToBinary(estados[i].id,2);
-            string txt_cod_ep= intToBinary(ProximoEstadoId(estados[i], todosValores),2);
+            string txt_cod_ea= intToBinary(estados[i].id, n_var_est);
+            string txt_cod_ep= intToBinary(ProximoEstadoId(estados[i], todosValores), n_var_est);
             string txt_var_out= SubstitueValores(varOut, estados[i].valor_out);
-//            cout << txt_cod_ea << " " << valores << " " << txt_cod_ep
+//            out << txt_cod_ea << " " << valores << " " << txt_cod_ep
 //            << " " << SubstitueValores(varOut, estados[i].valor_out) << endl;
             for(unsigned int k=0; k<txt_cod_ea.size(); k++)
-                cout << txt_cod_ea[k] << ",";
+                out << txt_cod_ea[k] << ",";
             for(unsigned int k=0; k<valores.size(); k++)
-                cout << valores[k] << ",";
-            cout << ",";
+                out << valores[k] << ",";
             for(unsigned int k=0; k<txt_cod_ep.size(); k++)
-                cout << txt_cod_ep[k] << ",";
+                out << "," << txt_cod_ep[k];
             for(unsigned int k=0; k<txt_var_out.size(); k++)
-            {
-                cout << txt_var_out[k];
-                if(k != txt_var_out.size()-1) cout << ",";
-            }
-            cout << endl;
+                out << "," << txt_var_out[k];
+            out << endl;
             ProximoEstadoId(estados[i], todosValores);
         }
     }

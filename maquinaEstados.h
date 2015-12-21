@@ -6,14 +6,12 @@
 
 #include <iostream>
 #include <algorithm>
+#include <fstream>
 #include <math.h>
 #include <vector>
 #include <string>
 
-using std::string;
-using std::cout;
-using std::endl;
-using std::vector;
+using namespace std;
 
 class MaquinaEstados
 {
@@ -23,11 +21,11 @@ class MaquinaEstados
 public:
     bool AdicionaVariavelIn(string nome);
     bool AdicionaVariavelOut(string nome);
-    bool AdicionaEstado(string nome, int id, string valor_out);
+    bool AdicionaEstado(string nome, int id, vector<string> valor_out);
     bool Liga(string estado1, string estado2, string cond);
-    string SubstitueValores(string exp, string valores);
+    string SubstitueValores(string exp, vector<string> valores);
     bool ProcessaOp(string op);
-    int ProximoEstadoId(Estado estado_atual, string todosValores);
-    void Possibilidades();
+    int ProximoEstadoId(Estado estado_atual, vector<string> todosValores);
+    void Possibilidades(ostream& out);
 };
 #endif // MAQUINAESTADOS_H

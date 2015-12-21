@@ -1,6 +1,6 @@
 #include "estado.h"
 
-Estado::Estado(string nome, int id, string valor_out)
+Estado::Estado(string nome, int id, vector<string> valor_out)
 {
     this->id= id;
     this->nome= nome;
