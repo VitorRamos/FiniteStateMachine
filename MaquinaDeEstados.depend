@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1450616421 source:c:\users\vitor ramos\desktop\c++\projetos\maquinadeestados\main.cpp
+1450656115 source:c:\users\vitor ramos\desktop\c++\projetos\maquinadeestados\main.cpp
 	<iostream>
 	"maquinaEstados.h"
 	"estado.h"
@@ -20,7 +20,7 @@
 	<vector>
 	<string>
 
-1450616860 c:\users\vitor ramos\desktop\c++\projetos\maquinadeestados\maquinaestados.h
+1450655551 c:\users\vitor ramos\desktop\c++\projetos\maquinadeestados\maquinaestados.h
 	"estado.h"
 	<iostream>
 	<algorithm>
@@ -28,13 +28,13 @@
 	<vector>
 	<string>
 
-1450616848 c:\users\vitor ramos\desktop\c++\projetos\maquinadeestados\estado.h
+1450655551 c:\users\vitor ramos\desktop\c++\projetos\maquinadeestados\estado.h
 	<vector>
 	<string>
 
-1450616849 source:c:\users\vitor ramos\desktop\c++\projetos\maquinadeestados\estado.cpp
+1450655551 source:c:\users\vitor ramos\desktop\c++\projetos\maquinadeestados\estado.cpp
 	"estado.h"
 
-1450653808 source:c:\users\vitor ramos\desktop\c++\projetos\maquinadeestados\maquinaestados.cpp
+1450656309 source:c:\users\vitor ramos\desktop\c++\projetos\maquinadeestados\maquinaestados.cpp
 	"maquinaEstados.h"
 

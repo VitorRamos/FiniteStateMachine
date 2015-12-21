@@ -17,14 +17,16 @@ using std::vector;
 
 class MaquinaEstados
 {
-    vector<string> variaveis;
+    vector<string> variaveis_out;
+    vector<string> variaveis_in;
     vector<Estado> estados;
 public:
-    void AdicionaEstado(string nome, int id);
-    void AdicionaVariavel(string nome);
+    bool AdicionaVariavelIn(string nome);
+    bool AdicionaVariavelOut(string nome);
+    bool AdicionaEstado(string nome, int id, string valor_out);
+    bool Liga(string estado1, string estado2, string cond);
     string SubstitueValores(string exp, string valores);
     bool ProcessaOp(string op);
-    void Liga(string e1, string e2, string cond);
     int ProximoEstadoId(Estado estado_atual, string todosValores);
     void Possibilidades();
 };

@@ -27,19 +27,49 @@ string paraMinusculo(string str)
     return ret;
 }
 
-void MaquinaEstados::AdicionaEstado(string nome, int id)
+bool MaquinaEstados::AdicionaVariavelIn(string nome)
 {
+    for(auto& var: variaveis_in)
+        if(var == nome) // mesmo nome variavel
+            return false;
+    variaveis_in.push_back(nome);
+    return true;
+}
+bool MaquinaEstados::AdicionaVariavelOut(string nome)
+{
+    for(auto& var: variaveis_out)
+        if(var == nome) // mesmo nome variavel
+            return false;
+    variaveis_out.push_back(nome);
+    return true;
+}
+bool MaquinaEstados::AdicionaEstado(string nome, int id, string valor_out)
+{
+    //Verificar variaveis do valor_out
     for(auto& est: estados)
         if( (paraMinusculo(nome) == paraMinusculo(est.nome)) || est.id == id ) // mesmo nome ou id
-            return;
-    estados.push_back(Estado(nome, id));
+            return false;
+    estados.push_back(Estado(nome, id, valor_out));
+    return true;
 }
-void MaquinaEstados::AdicionaVariavel(string nome)
+bool MaquinaEstados::Liga(string estado1, string estado2, string cond)
 {
-    for(auto& var: variaveis)
-        if(var == nome) // mesmo nome variavel
-            return ;
-    variaveis.push_back(nome);
+    string test_cond= cond;
+    while(test_cond.find("+")!=string::npos)
+        test_cond.replace(test_cond.find("+"),1,"");
+    while(test_cond.find("!")!=string::npos)
+        test_cond.replace(test_cond.find("!"),1,"");
+    for(auto& var: variaveis_in)
+        while(test_cond.find(var)!=string::npos)
+            test_cond.replace(test_cond.find(var),var.size(),"");
+    if(!test_cond.empty()) // condição invalida
+        return false;
+    int id= -1;
+    for(auto& est: estados) if(paraMinusculo(est.nome) == paraMinusculo(estado2)) id= est.id;
+    if(id == -1) // estado não existe
+        return false;
+    for(auto& est: estados) if(paraMinusculo(est.nome) == paraMinusculo(estado1)) est.Liga(id, cond);
+    return true;
 }
 string MaquinaEstados::SubstitueValores(string exp, string valores)
 {
@@ -74,24 +104,7 @@ bool MaquinaEstados::ProcessaOp(string op)
         return true;
     return false;
 }
-void MaquinaEstados::Liga(string e1, string e2, string cond)
-{
-    string test_cond= cond;
-    while(test_cond.find("+")!=string::npos)
-        test_cond.replace(test_cond.find("+"),1,"");
-    while(test_cond.find("!")!=string::npos)
-        test_cond.replace(test_cond.find("!"),1,"");
-    for(auto& var: variaveis)
-        while(test_cond.find(var)!=string::npos)
-            test_cond.replace(test_cond.find(var),var.size(),"");
-    if(!test_cond.empty()) // condição invalida
-        return;
-    int id= -1;
-    for(auto& est: estados) if(paraMinusculo(est.nome) == paraMinusculo(e2)) id= est.id;
-    if(id == -1) // estado não existe
-        return;
-    for(auto& est: estados) if(paraMinusculo(est.nome) == paraMinusculo(e1)) est.Liga(id, cond);
-}
+
 int MaquinaEstados::ProximoEstadoId(Estado estado_atual, string todosValores)
 {
     for(unsigned int i=0; i<estado_atual.condicoes.size(); i++)
@@ -101,17 +114,21 @@ int MaquinaEstados::ProximoEstadoId(Estado estado_atual, string todosValores)
 }
 void MaquinaEstados::Possibilidades()
 {
-    int total_poss= variaveis.size();
+    int total_poss= variaveis_in.size();
     int x= pow(2, total_poss);
-
     int n_var_est= round(log2(estados.size()));
 
-    for(unsigned int i=0; i<n_var_est; i++)
+    string varOut;
+    for(auto& var: variaveis_out)
+        varOut+=var;
+    for(int i=0; i<n_var_est; i++)
         cout << "Ea" << i << ",";
-    for(auto& var: variaveis)
+    for(auto& var: variaveis_in)
         cout << var << ",";
-    for(unsigned int i=0; i<n_var_est; i++)
+    for(int i=0; i<n_var_est; i++)
         cout << "," << "Ep" << i;
+    for(auto& var: variaveis_out)
+        cout << "," << var;
     cout << endl;
     for(unsigned int i=0; i<estados.size(); i++)
     {
@@ -120,22 +137,25 @@ void MaquinaEstados::Possibilidades()
             string valores= intToBinary(j, total_poss), todosValores;
             for(unsigned int k=0; k<valores.size(); k++)
             {
-                todosValores+=variaveis[k]+"="+valores[k];
+                todosValores+=variaveis_in[k]+"="+valores[k];
                 if(k!=valores.size()-1) todosValores+=",";
             }
             string txt_cod_ea= intToBinary(estados[i].id,2);
             string txt_cod_ep= intToBinary(ProximoEstadoId(estados[i], todosValores),2);
-
-//            cout << txt_cod_ea << " " << valores << " " << txt_cod_ep << endl;
+            string txt_var_out= SubstitueValores(varOut, estados[i].valor_out);
+//            cout << txt_cod_ea << " " << valores << " " << txt_cod_ep
+//            << " " << SubstitueValores(varOut, estados[i].valor_out) << endl;
             for(unsigned int k=0; k<txt_cod_ea.size(); k++)
                 cout << txt_cod_ea[k] << ",";
             for(unsigned int k=0; k<valores.size(); k++)
                 cout << valores[k] << ",";
             cout << ",";
             for(unsigned int k=0; k<txt_cod_ep.size(); k++)
+                cout << txt_cod_ep[k] << ",";
+            for(unsigned int k=0; k<txt_var_out.size(); k++)
             {
-                cout << txt_cod_ep[k];
-                if(k!=txt_cod_ep.size()-1) cout << ",";
+                cout << txt_var_out[k];
+                if(k != txt_var_out.size()-1) cout << ",";
             }
             cout << endl;
             ProximoEstadoId(estados[i], todosValores);
