@@ -1,4 +1,4 @@
-#include "maquinaEstados.h"
+#include "stateMachine.h"
 
 // Utilitarios
 string intToBinary(int n, int nbits= 0)
@@ -27,51 +27,51 @@ string paraMinusculo(string str)
     return ret;
 }
 
-bool MaquinaEstados::AdicionaVariavelIn(string nome)
+bool StateMachine::AddInput(string name)
 {
-    for(auto& var: variaveis_in)
-        if(var == nome) // mesmo nome variavel
+    for(auto& var: inputs)
+        if(var == name) // mesmo name variavel
             return false;
-    variaveis_in.push_back(nome);
+    inputs.push_back(name);
     return true;
 }
-bool MaquinaEstados::AdicionaVariavelOut(string nome)
+bool StateMachine::AddOutput(string name)
 {
-    for(auto& var: variaveis_out)
-        if(var == nome) // mesmo nome variavel
+    for(auto& var: outputs)
+        if(var == name) // mesmo name variavel
             return false;
-    variaveis_out.push_back(nome);
+    outputs.push_back(name);
     return true;
 }
-bool MaquinaEstados::AdicionaEstado(string nome, int id, string valor_out)
+bool StateMachine::AddState(string name, int id, string valor_out)
 {
     //Verificar variaveis do valor_out
-    for(auto& est: estados)
-        if( (paraMinusculo(nome) == paraMinusculo(est.nome)) || est.id == id ) // mesmo nome ou id
+    for(auto& est: states)
+        if( (paraMinusculo(name) == paraMinusculo(est.name)) || est.id == id ) // mesmo name ou id
             return false;
-    estados.push_back(Estado(nome, id, valor_out));
+    states.push_back(State(name, id, valor_out));
     return true;
 }
-bool MaquinaEstados::Liga(string estado1, string estado2, string cond)
+bool StateMachine::ConnectState(string estado1, string estado2, string cond)
 {
     string test_cond= cond;
     while(test_cond.find("+")!=string::npos)
         test_cond.replace(test_cond.find("+"),1,"");
     while(test_cond.find("!")!=string::npos)
         test_cond.replace(test_cond.find("!"),1,"");
-    for(auto& var: variaveis_in)
+    for(auto& var: inputs)
         while(test_cond.find(var)!=string::npos)
             test_cond.replace(test_cond.find(var),var.size(),"");
     if(!test_cond.empty()) // condição invalida
         return false;
     int id= -1;
-    for(auto& est: estados) if(paraMinusculo(est.nome) == paraMinusculo(estado2)) id= est.id;
+    for(auto& est: states) if(paraMinusculo(est.name) == paraMinusculo(estado2)) id= est.id;
     if(id == -1) // estado não existe
         return false;
-    for(auto& est: estados) if(paraMinusculo(est.nome) == paraMinusculo(estado1)) est.Liga(id, cond);
+    for(auto& est: states) if(paraMinusculo(est.name) == paraMinusculo(estado1)) est.Connect(id, cond);
     return true;
 }
-string MaquinaEstados::SubstitueValores(string exp, string valores)
+string StateMachine::ReplaceValues(string exp, string valores)
 {
     while(valores.find("=")!=string::npos)
     {
@@ -83,7 +83,7 @@ string MaquinaEstados::SubstitueValores(string exp, string valores)
     }
     return exp;
 }
-bool MaquinaEstados::ProcessaOp(string op)
+bool StateMachine::ProcessOp(string op)
 {
     // Processa not
     while(op.find("!0") != string::npos)
@@ -105,46 +105,46 @@ bool MaquinaEstados::ProcessaOp(string op)
     return false;
 }
 
-int MaquinaEstados::ProximoEstadoId(Estado estado_atual, string todosValores)
+int StateMachine::NextStateId(State estado_atual, string todosValores)
 {
-    for(unsigned int i=0; i<estado_atual.condicoes.size(); i++)
-        if(ProcessaOp(SubstitueValores(estado_atual.condicoes[i], todosValores)))
-            return estado_atual.estado_proximo_id[i];
+    for(unsigned int i=0; i<estado_atual.conditions.size(); i++)
+        if(ProcessOp(ReplaceValues(estado_atual.conditions[i], todosValores)))
+            return estado_atual.next_state_id[i];
     return estado_atual.id;
 }
-void MaquinaEstados::Possibilidades()
+void StateMachine::Possibilities()
 {
-    int total_poss= variaveis_in.size();
+    int total_poss= inputs.size();
     int x= pow(2, total_poss);
-    int n_var_est= round(log2(estados.size()));
+    int n_var_est= round(log2(states.size()));
 
     string varOut;
-    for(auto& var: variaveis_out)
+    for(auto& var: outputs)
         varOut+=var;
     for(int i=0; i<n_var_est; i++)
         cout << "Ea" << i << ",";
-    for(auto& var: variaveis_in)
+    for(auto& var: inputs)
         cout << var << ",";
     for(int i=0; i<n_var_est; i++)
         cout << "," << "Ep" << i;
-    for(auto& var: variaveis_out)
+    for(auto& var: outputs)
         cout << "," << var;
     cout << endl;
-    for(unsigned int i=0; i<estados.size(); i++)
+    for(unsigned int i=0; i<states.size(); i++)
     {
         for(int j=0; j<x; j++)
         {
             string valores= intToBinary(j, total_poss), todosValores;
             for(unsigned int k=0; k<valores.size(); k++)
             {
-                todosValores+=variaveis_in[k]+"="+valores[k];
+                todosValores+=inputs[k]+"="+valores[k];
                 if(k!=valores.size()-1) todosValores+=",";
             }
-            string txt_cod_ea= intToBinary(estados[i].id,2);
-            string txt_cod_ep= intToBinary(ProximoEstadoId(estados[i], todosValores),2);
-            string txt_var_out= SubstitueValores(varOut, estados[i].valor_out);
+            string txt_cod_ea= intToBinary(states[i].id,2);
+            string txt_cod_ep= intToBinary(NextStateId(states[i], todosValores),2);
+            string txt_var_out= ReplaceValues(varOut, states[i].output);
 //            cout << txt_cod_ea << " " << valores << " " << txt_cod_ep
-//            << " " << SubstitueValores(varOut, estados[i].valor_out) << endl;
+//            << " " << ReplaceValues(varOut, states[i].output) << endl;
             for(unsigned int k=0; k<txt_cod_ea.size(); k++)
                 cout << txt_cod_ea[k] << ",";
             for(unsigned int k=0; k<valores.size(); k++)
@@ -158,7 +158,7 @@ void MaquinaEstados::Possibilidades()
                 if(k != txt_var_out.size()-1) cout << ",";
             }
             cout << endl;
-            ProximoEstadoId(estados[i], todosValores);
+            NextStateId(states[i], todosValores);
         }
     }
 }
