@@ -1,3 +1,3 @@
-# MaquinaDeEstados
+# Finite State Machine
 
-software par auxiliar na criação da tabela da verdade de maquina de estados de circuitos digitais
+Software to assist in the creation of the truth table of digital circuit states
